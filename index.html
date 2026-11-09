@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SatsScout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#090B0F;--card:#0F1217;--line:#232830;--tx:#fff;--mu:#8B93A1;--or:#F7931A;--up:#4ADE80;--dn:#F87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 'Schibsted Grotesk',system-ui,sans-serif}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--or)}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;padding:0 8px 18px}
+.logo i{width:26px;height:26px;border-radius:7px;background:var(--or);display:grid;place-items:center;color:#090B0F;font-style:normal;font-weight:700}
+nav a{display:block;padding:9px 12px;border-radius:8px;color:var(--mu);text-decoration:none;cursor:pointer}
+nav a:hover{color:var(--tx);background:#14181E}
+nav a.on{color:var(--tx);background:#1A1F27;box-shadow:inset 3px 0 0 var(--or)}
+.side-note{margin-top:auto;color:var(--mu);font-size:12px;padding:8px}
+main{padding:22px 28px 60px;min-width:0}
+.top{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+.search{position:relative;flex:1;max-width:480px}
+.search input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.search input:focus,button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--or);outline-offset:2px}
+.res{position:absolute;left:0;right:0;top:46px;background:#12161C;border:1px solid var(--line);border-radius:10px;z-index:5;max-height:320px;overflow:auto}
+.res div{padding:9px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+.res div:hover{background:#1A1F27}
+.res small{color:var(--mu)}
+.menu{display:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+.demo{border:1px solid #5a3a0c;background:#1a1208;color:#f3c27c;border-radius:10px;padding:9px 14px;font-size:13px;margin-bottom:22px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.02em}
+h2{font-size:18px;margin:0 0 12px}
+.sub{color:var(--mu);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:1.6fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.stat b{display:block;font-size:24px;margin-top:2px}
+.stat span,.mu{color:var(--mu);font-size:13px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.hero{padding:22px 22px 12px;margin-bottom:14px}
+.hero .big{font-size:40px;font-weight:700;letter-spacing:-.03em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:0;padding:6px 12px;cursor:pointer;color:var(--mu)}
+.seg button.on{background:var(--or);color:#090B0F;font-weight:700}
+svg.chart{width:100%;height:220px;display:block}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mu);font-weight:500;font-size:13px;cursor:pointer;user-select:none}
+th.s{color:var(--or)}
+tr:hover td{background:#12161C}
+.art{position:relative;width:34px;height:34px;flex:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:10px;overflow:hidden;background:linear-gradient(135deg,#1b2029,#12161c);border:1px solid var(--line);color:var(--or);font-size:12px;letter-spacing:.02em}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.art.loading{background:linear-gradient(90deg,#14181E,#1d222a,#14181E);background-size:200% 100%;animation:sk 1.2s infinite}.art.loading b,.art.ok b{opacity:0}.art.big-art b{font-size:18px}
+.star{background:none;border:0;cursor:pointer;font-size:18px;color:var(--mu)}
+.star.on{color:var(--or)}
+.bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.bar select,.bar input{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12px;color:var(--mu)}
+.tag.ok{border-color:#1f5e3a;color:var(--up)}
+.tag.pend{border-color:#6b5316;color:#f1c453}
+.tag.no{border-color:var(--line)}
+.why{margin:8px 0 0;padding-left:18px;color:var(--mu);font-size:13px}
+.act div{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.act div:last-child{border:0}
+.skel{height:14px;border-radius:6px;background:linear-gradient(90deg,#14181E,#1d222a,#14181E);background-size:200% 100%;animation:sk 1.2s infinite;margin:10px 0}
+@keyframes sk{to{background-position:-200% 0}}
+.empty{color:var(--mu);text-align:center;padding:36px 10px}
+.nl{color:inherit;text-decoration:none}.nl:hover{color:var(--or)}.back{color:var(--mu)}
+.click{cursor:pointer}.click:hover{border-color:#3a414c}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chips button,.btn{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--mu)}
+.chips button.on{background:var(--or);border-color:var(--or);color:#090B0F;font-weight:700}
+.btn{border-radius:8px;margin-bottom:14px}.btn:hover{color:var(--tx)}
+.ext{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}.ext a{border:1px solid var(--line);border-radius:8px;padding:8px 14px;text-decoration:none}.ext a:hover{border-color:var(--or)}
+.g11{grid-template-columns:1fr 1fr}.art.big-art{width:56px;height:56px;border-radius:12px;margin:0}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:fixed;inset:0 auto 0 0;width:250px;z-index:10;background:var(--bg);transform:translateX(-100%);transition:transform .2s}aside.open{transform:none}.menu{display:block}.g4{grid-template-columns:1fr 1fr}.g2,.g3,.g11{grid-template-columns:1fr}main{padding:16px 16px 60px}}
+@media(prefers-reduced-motion:reduce){.skel,.art.loading,.btc .sk{animation:none}aside{transition:none}}
+html{-webkit-text-size-adjust:100%}img,svg{max-width:100%}main{overflow-wrap:break-word}.grid>*{min-width:0}
+.demo.live{border-color:#1f5e3a;background:#0b1a11;color:#8be0ad}.demo.err{border-color:#6b1f1f;background:#1a0b0b;color:#f3a0a0}
+.mlogo{display:none;align-items:center;gap:8px;font-weight:700}.mlogo i{width:24px;height:24px;border-radius:7px;background:var(--or);display:grid;place-items:center;color:#090B0F;font-style:normal}
+.btc{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 12px;text-decoration:none;color:var(--tx);min-height:44px;white-space:nowrap;flex:none}.btc:hover{border-color:#3a414c}.btc svg{width:26px;height:26px;flex:none}
+.btc .px{display:flex;flex-direction:column;line-height:1.2}.btc .pr{font-weight:700;font-size:15px}.btc .meta{font-size:11px;color:var(--mu)}.t-short{display:none}
+.btc .chg{font-weight:700;font-size:13px;padding:2px 8px;border-radius:99px}.btc .chg.up{background:#0f2a1a;color:var(--up)}.btc .chg.dn{background:#2a1212;color:var(--dn)}
+.btc.stale{border-color:#6b5316}.btc.err{border-color:#6b1f1f}.btc .sk{display:block;height:12px;width:78px;border-radius:6px;background:linear-gradient(90deg,#14181E,#1d222a,#14181E);background-size:200% 100%;animation:sk 1.2s infinite}
+#scrim{display:none}.tcards{display:none}.tc{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}.tc .k{color:var(--mu);font-size:12px}
+@media(max-width:900px){.top{flex-wrap:wrap;gap:10px}.menu{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:20px;order:0}.mlogo{display:flex;order:1}.btc{order:2;margin-left:auto}.search{order:3;flex:1 1 100%;max-width:none}
+aside{width:min(280px,86vw);overflow-y:auto;overscroll-behavior:contain;visibility:hidden;transition:transform .2s,visibility 0s .2s}aside.open{visibility:visible;transition:transform .2s}
+#scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9;opacity:0;pointer-events:none;transition:opacity .2s}body.navopen #scrim{opacity:1;pointer-events:auto}body.navopen{overflow:hidden}
+nav a{padding:13px 12px;min-height:44px}.chips button,.btn,.seg button,.bar select,.bar input,.search input{min-height:44px}.star{min-width:44px;min-height:44px}input,select{font-size:16px}
+.bar>*{flex:1 1 140px}.hero .big{font-size:30px}h1{font-size:24px}svg.chart{height:170px}}
+@media(max-width:640px){.ttable{display:none}.tcards{display:grid;gap:12px}.hero{padding:16px 14px 8px}.card{padding:14px}}
+@media(max-width:480px){.t-long,.mlogo span{display:none}.t-short{display:inline}.btc{padding:6px 10px;gap:8px}.btc svg{width:22px;height:22px}.btc .pr{font-size:14px}main{padding:14px 12px 60px}.stat b{font-size:20px}}
+.btc .lbl{font-size:10px;letter-spacing:.08em;color:var(--mu);font-weight:700}.btc .h24{font-weight:400;opacity:.85}.btc.err .pr{font-size:13px}
+.oc{display:flex;flex-direction:column;gap:10px}.oc .desc{color:var(--mu);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em;margin:0}
+.ost{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:14px}.ost .k{display:block;color:var(--mu);font-size:11px}
+.badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mu)}
+.badge.live{border-color:#1f5e3a;color:var(--up)}.badge.cached{border-color:#6b5316;color:#f1c453}.badge.demo{border-color:#5a3a0c;color:#f3c27c}
+.oc .art.big-art{margin-right:12px}.oc .src{color:var(--mu);font-size:11px}.oc .ln{display:flex;gap:12px;font-size:13px;flex-wrap:wrap}.na{color:var(--mu)}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.ctl>*{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px}.ctl input{flex:2 1 200px}.ctl select{flex:1 1 130px}
+.more{display:flex;justify-content:center;margin:18px 0}.more .btn{margin:0;padding:10px 22px;border-radius:99px}.prov td,.prov th{padding:8px 10px;font-size:13px}
+@media(max-width:900px){.ctl>*{min-height:44px}}
+@media(max-width:480px){.btc .lbl,.btc .h24{display:none}.ctl select{flex:1 1 45%}}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="scrim"></div><aside id="side" aria-label="Main navigation">
+  <div class="logo"><i>S</i>SatsScout</div>
+  <nav id="nav"></nav>
+  <div class="side-note">Explore. Discover. Understand Bitcoin NFTs.<br>No wallet needed.</div>
+</aside>
+<main>
+  <div class="top">
+    <button class="menu" id="menu" aria-label="Open menu" aria-expanded="false" aria-controls="side">☰</button><div class="mlogo"><i>S</i><span>SatsScout</span></div>
+    <div class="search"><input id="q" type="search" placeholder="Search collections, Runes…" aria-label="Global search" autocomplete="off"><div class="res" id="res" hidden></div></div><a class="btc" id="btc" href="https://www.coingecko.com/en/coins/bitcoin" target="_blank" rel="noopener noreferrer" aria-live="polite"></a>
+  </div>
+  <div class="demo"><b>DEMO DATA.</b> Every collection, number and project here is fictional sample data for Stage 1. Live data from verified providers arrives in Stage 4.</div>
+  <div id="view"><div class="skel" style="width:40%"></div><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+</main>
+</div>
+<script>
+/* ---------- Demo data provider (swap for real adapters in Stage 4) ---------- */
+const SRC='DEMO DATA (fictional sample)';
+const STAMP=new Date().toISOString().slice(0,16).replace('T',' ')+' UTC';
+const C=[
+ ['Moonlit Sparrows',0.0420,18.4,96.2,31.0,214,138,9,10000],
+ ['Block Foxes',0.0185,-6.2,41.5,48.3,120,402,420,8888],
+ ['Satoshi’s Attic',0.2100,4.1,38.8,36.0,19,77,860,2100],
+ ['Pixel Monks',0.0089,52.7,35.3,9.1,390,610,5,6666],
+ ['Hashflower',0.0310,-14.9,22.4,30.7,61,255,150,5000],
+ ['Cold Storage Cats',0.0067,2.3,19.9,18.2,277,812,300,10000],
+ ['Taproot Tides',0.1180,9.8,17.1,11.0,22,40,64,1000],
+ ['Mempool Ghosts',0.0024,-31.5,6.8,16.4,98,933,610,9999],
+ ['Halving Hounds',0.0540,27.3,14.6,5.2,36,92,12,3333],
+ ['Inscribed Orchards',0.0142,-1.1,12.2,12.0,70,305,230,7000]
+].map((a,i)=>({id:'c'+i,n:a[0],fl:a[1],ch:a[2],vol:a[3],avg:a[4],sales:a[5],list:a[6],age:a[7],sup:a[8],hue:(i*47+20)%360}));
+const R=[['UNCOMMON•GOODS','⧉',21000000,'—','Demo'],['SATOSHI•NAKAMOTO','₿',21000000,'61,204','Demo'],['DOG•GO•TO•THE•MOON','🐕',100000000000,'88,410','Demo'],['RSIC•GENESIS•RUNE','◈',21000000,'34,119','Demo'],['WANKO•MANKO•RUNES','◎',100000000,'12,880','Demo'],['MEMPOOL•SPARK','✦',5000000,'—','Demo']].map((r,i)=>({id:'r'+i,n:r[0],sym:r[1],sup:r[2],hold:r[3],vol:[212,148,96,41,19,3][i],ch:[3.1,-8.4,12.7,0.6,-2.2,41.0][i]}));
+const P=[['Dawnfield Genesis','Hand-drawn landscapes inscribed in a single block range.','2026-12-04',3000,'verified','dawnfield.example','@dawnfield'],['Neon Ledger','Generative ledger art reacting to fee levels.','2026-11-20',5500,'pending','neonledger.example','@neonledger'],['Orbit Runes','Community Rune with fair-launch mint.','2027-01-15',21000000,'pending','orbitrunes.example','@orbitrunes'],['Silent Harbor','1-of-1 photography series.','2026-12-22',444,'unverified','—','@silentharbor'],['Cipher Kids','PFP set with on-chain traits.','2027-02-02',9000,'rejected','—','—']].map((p,i)=>({id:'p'+i,n:p[0],d:p[1],date:p[2],sup:p[3],st:p[4],web:p[5],x:p[6],hue:(i*71+200)%360}));
+function series(days,seed){let v=1000+seed*7,o=[];for(let i=0;i<days;i++){v+=Math.sin(i*.7+seed)*40+Math.cos(i*.23)*25+(i/days)*30;o.push(Math.max(300,v))}return o}
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const f=(n,d=4)=>n==null?'n/a':Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
+const pct=n=>n==null?'<span class="mu">n/a</span>':`<span class="${n>=0?'up':'dn'}">${n>=0?'+':''}${n.toFixed(1)}%</span>`;
+let API_BASE='',SERVER='';   // SERVER = same-origin server detected via /api/health; API_BASE (live collection mode) only when a data provider is configured
+const imgUrl=u=>{if(typeof u!=='string'||!/^https:\/\//i.test(u))return null;return SERVER?SERVER+'/api/img?u='+encodeURIComponent(u):u};
+const art=e=>{const n=(e&&(e.raw||e.n))||'?',u=imgUrl(e&&e.img),ini=n.replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+ return `<span class="art${e&&e.big?' big-art':''}${u?' loading':''}" role="img" aria-label="${esc(n)} artwork${u?'':' not available'}" title="${u?'':'No verified artwork available'}"><b aria-hidden="true">${ini}</b>${u?`<img src="${esc(u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="var p=this.parentNode;p.classList.remove('loading');p.classList.add('ok')" onerror="var p=this.parentNode;p.classList.remove('loading');this.remove()">`:''}</span>`};
+let WL=new Set();
+try{WL=new Set(JSON.parse(localStorage.getItem('ss_wl')||'[]'))}catch(e){}
+function saveWL(){try{localStorage.setItem('ss_wl',JSON.stringify([...WL]))}catch(e){}}
+function toggleWL(id){WL.has(id)?WL.delete(id):WL.add(id);saveWL();render()}
+const star=id=>`<button class="star ${WL.has(id)?'on':''}" onclick="event.stopPropagation();toggleWL('${id}')" aria-label="Toggle watchlist">${WL.has(id)?'★':'☆'}</button>`;
+const go=h=>{if(location.hash==='#'+h)render();else location.hash=h};
+const nl=c=>`<a class="nl" href="#collection-${c.id}">${art(c)}${c.n}</a>`;
+const trendCard=c=>`<div class="card click" onclick="go('collection-${c.id}')"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="display:flex;align-items:center;min-width:0"><span class="mu" style="margin-right:10px">#${rk(c)}</span>${nl(c)}</div>${star(c.id)}</div><div class="tc" style="margin-top:10px"><div><span class="k">Floor</span><br>${f(c.fl)} BTC</div><div><span class="k">24h</span><br>${pct(c.ch)}</div><div><span class="k">Volume</span><br>${f(c.vol,1)} BTC</div><div><span class="k">Sales · Listed</span><br>${f(c.sales,0)} · ${f(c.list,0)}</div></div></div>`;
+const rk=c=>[...C].sort((a,b)=>b.vol-a.vol).findIndex(x=>x.id===c.id)+1;
+const esc=s=>s.replace(/[&<>"']/g,m=>'&#'+m.charCodeAt(0)+';');
+const href=w=>w.startsWith('http')?w:'https://'+w;
+const lnk=(t,u)=>t==='—'?'—':`<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`;
+const runeRows=()=>R.filter(r=>r.n.toLowerCase().includes(rsq.toLowerCase())).sort((a,b)=>b[rsort]-a[rsort]);
+const foot=`<p class="mu">Source: ${SRC} · Updated ${STAMP}</p>`;
+
+/* ---------- Smart Discovery: transparent rules ---------- */
+function discovery(){
+ const out=[];
+ C.forEach(c=>{
+  const ratio=c.vol/c.avg;
+  if(ratio>=2)out.push({c,k:'Unusual trading activity',why:[`24h volume ${f(c.vol,1)} BTC is ${ratio.toFixed(1)}× its 7-day daily average (${f(c.avg,1)} BTC).`,'Rule: 24h volume ≥ 2× the 7-day daily average.']});
+  else if(ratio>=1.3)out.push({c,k:'Rising volume',why:[`24h volume is ${ratio.toFixed(1)}× its 7-day average.`,'Rule: 1.3× to 2× the 7-day daily average.']});
+  if(Math.abs(c.ch)>=20)out.push({c,k:'Large floor-price move',why:[`Floor moved ${c.ch>0?'+':''}${c.ch}% in 24h.`,'Rule: floor change of 20% or more in either direction.']});
+  if(c.age!=null&&c.age<=14)out.push({c,k:'Newly discovered',why:[`First tracked ${c.age} days ago.`,'Rule: tracked for 14 days or fewer.']});
+  if(ratio<=0.6)out.push({c,k:'Declining activity',why:[`24h volume is ${(ratio*100).toFixed(0)}% of its 7-day average.`,'Rule: 24h volume ≤ 60% of the 7-day daily average.']});
+ });
+ return out;
+}
+const discCard=d=>`<div class="card click" onclick="go('collection-${d.c.id}')"><div>${art(d.c)}<b><a class="nl" href="#collection-${d.c.id}">${d.c.n}</a></b></div><div style="margin-top:8px"><span class="tag">${d.k}</span></div><ul class="why">${d.why.map(w=>`<li>${w}</li>`).join('')}</ul></div>`;
+
+/* ---------- Views ---------- */
+let range=30,sort={k:'vol',dir:-1},flt='all',rq='',dg='all',oq='',iq='',rsq='',rsort='vol',pf='all';
+function chartSVG(){
+ const d=series(range,3),mn=Math.min(...d),mx=Math.max(...d),W=800,H=220,p=8;
+ const pts=d.map((v,i)=>[p+i*(W-2*p)/(d.length-1),H-p-(v-mn)/(mx-mn)*(H-2*p-10)]);
+ const line=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join('');
+ return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Demo total volume chart"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7931A" stop-opacity=".35"/><stop offset="1" stop-color="#F7931A" stop-opacity="0"/></linearGradient></defs><path d="${line}L${W-p} ${H}L${p} ${H}Z" fill="url(#g)"/><path d="${line}" fill="none" stroke="#F7931A" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function overview(){
+ const tv=C.reduce((a,c)=>a+(c.vol||0),0),top=[...C].sort((a,b)=>b.ch-a.ch).slice(0,4),tr=[...C].sort((a,b)=>b.vol-a.vol).slice(0,5);
+ const disc=discovery().slice(0,3);
+ return `<h1>Overview</h1><p class="sub">A read on what is moving across Bitcoin Ordinals and Runes.</p>
+ <div class="card hero"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><span class="mu">${API_BASE?'Combined 24h volume of listed collections':'Tracked 24h volume, DEMO DATA'}</span><div class="big">${C.some(c=>c.vol==null)?'n/a':f(tv,1)+' BTC'}</div></div>
+ <div class="seg">${[7,30,90].map(r=>`<button class="${r===range?'on':''}" onclick="range=${r};render()">${r}d</button>`).join('')}</div></div>${API_BASE?'<div class="empty">Unavailable: the connected provider supplies no aggregate volume history.</div>':chartSVG()}</div>
+ <div class="grid g4" style="margin-bottom:14px">
+  <div class="card stat"><span>Collections shown</span><b>${C.length}</b></div>
+  <div class="card stat"><span>Runes shown</span><b>${R.length}</b></div>
+  <div class="card stat"><span>Sales, 24h</span><b>${(C.some(c=>c.sales==null)?'n/a':f(C.reduce((a,c)=>a+c.sales,0),0))}</b></div>
+  <div class="card stat"><span>Listed items</span><b>${(C.some(c=>c.list==null)?'n/a':f(C.reduce((a,c)=>a+c.list,0),0))}</b></div></div>
+ <div class="grid g2" style="margin-bottom:14px">
+  <div class="card"><h2>${API_BASE?'Top collections by 24h volume':'Sample collections (demo ranking)'}</h2><div class="tablewrap"><table><tbody>${tr.map((c,i)=>`<tr><td>${i+1}</td><td>${nl(c)}</td><td>${f(c.fl)} BTC</td><td>${pct(c.ch)}</td><td>${f(c.vol,1)} BTC</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="card act"><h2>Recent activity</h2>${API_BASE?'<div class="empty">Unavailable: marketwide activity is not connected yet.</div>':''}${(API_BASE?[]:C.slice(0,6)).map((c,i)=>`<div><span>${c.n} ${['sold','listed','sold','sold','listed','sold'][i]}</span><span class="mu">${f(c.fl*(1+i*.03))} BTC · ${i*3+1}m ago</span></div>`).join('')}</div></div>
+ <div style="display:flex;justify-content:space-between;align-items:baseline"><h2>Smart Discovery</h2><a href="#discovery">See all rules</a></div>
+ <div class="grid g3" style="margin-bottom:14px">${disc.map(discCard).join('')}</div>
+ <h2>Featured projects</h2><div class="grid g3">${P.slice(0,3).map(projCard).join('')}</div>
+ <p class="mu" style="margin-top:18px">Top movers 24h: ${top.map(c=>`${c.n} ${pct(c.ch)}`).join(' · ')}</p>${foot}`;
+}
+function trending(){
+ let rows=C.filter(c=>c.n.toLowerCase().includes(rq.toLowerCase()));
+ if(flt==='up')rows=rows.filter(c=>c.ch>0);if(flt==='down')rows=rows.filter(c=>c.ch<0);if(flt==='hot')rows=rows.filter(c=>c.vol/c.avg>=1.3);if(flt==='new')rows=rows.filter(c=>c.age<=14);
+ rows.sort((a,b)=>(a[sort.k]>b[sort.k]?1:-1)*sort.dir);
+ const th=(k,l)=>`<th class="${sort.k===k?'s':''}" onclick="sort={k:'${k}',dir:sort.k==='${k}'?-sort.dir:-1};render()">${l}${sort.k===k?(sort.dir<0?' ↓':' ↑'):''}</th>`;
+ return `<h1>${API_BASE?'Trending collections':'Collections (demo ranking)'}</h1><p class="sub">${API_BASE?'Ranked by 24h volume.':'DEMO DATA: rankings come from fictional numbers and do not show what is trending.'} Sort by any column.</p>
+ <div class="bar"><input id="rq" placeholder="Filter by name" value="${rq}" oninput="rq=this.value;render(true)" aria-label="Filter by name"><select onchange="flt=this.value;render()" aria-label="Price filter"><option value="all" ${flt==='all'?'selected':''}>All movement</option><option value="up" ${flt==='up'?'selected':''}>Floor rising</option><option value="down" ${flt==='down'?'selected':''}>Floor falling</option><option value="hot" ${flt==='hot'?'selected':''}>Volume above average</option><option value="new" ${flt==='new'?'selected':''}>Newly tracked</option></select></div>
+ <div class="card tablewrap ttable">${rows.length?`<table><thead><tr><th></th><th>Rank</th>${th('n','Collection')}${th('fl','Floor (BTC)')}${th('ch','24h')}${th('vol','Volume (BTC)')}${th('sales','Sales')}${th('list','Listed')}</tr></thead><tbody>${rows.map((c,i)=>`<tr><td>${star(c.id)}</td><td>#${rk(c)}</td><td>${nl(c)}</td><td>${f(c.fl)}</td><td>${pct(c.ch)}</td><td>${f(c.vol,1)}</td><td>${f(c.sales,0)}</td><td>${f(c.list,0)}</td></tr>`).join('')}</tbody></table>`:`<div class="empty">No collections match. Clear the filter or try a different name.</div>`}</div><div class="tcards">${rows.length?rows.map(trendCard).join(''):'<div class="card empty">No collections match. Clear the filter or try a different name.</div>'}</div>${foot}`;
+}
+function runes(){
+ return `<h1>Runes explorer</h1><p class="sub">Holder and volume figures show a dash when the provider does not supply them.</p><div class="bar"><input id="rsq" value="${rsq}" placeholder="Search Runes" oninput="rsq=this.value;render('rsq')" aria-label="Search Runes"><select onchange="rsort=this.value;render()" aria-label="Sort Runes"><option value="vol" ${rsort==='vol'?'selected':''}>Top volume</option><option value="ch" ${rsort==='ch'?'selected':''}>24h change</option><option value="sup" ${rsort==='sup'?'selected':''}>Supply</option></select></div>${runeRows().length?'':'<div class="card empty" style="margin-bottom:14px">'+(API_BASE&&!R.length?'Rune data is not connected yet.':'No Runes match that search.')+'</div>'}
+ <div class="card tablewrap"><table><thead><tr><th></th><th>Rune</th><th>Symbol</th><th>Supply</th><th>Holders</th><th>Volume (BTC)</th><th>Trades 24h</th><th>24h</th></tr></thead><tbody>${runeRows().map(r=>`<tr><td>${star(r.id)}</td><td>${r.n}</td><td>${r.sym}</td><td>${f(r.sup,0)}</td><td>${r.hold}</td><td>${f(r.vol,0)}</td><td>${f(r.vol*3.4,0)}</td><td>${pct(r.ch)}</td></tr>`).join('')}</tbody></table></div>${foot}`;
+}
+const stTag=s=>({verified:'<span class="tag ok">Verified by SatsScout</span>',pending:'<span class="tag pend">Under review</span>',unverified:'<span class="tag no">Unverified submission</span>',rejected:'<span class="tag no">Rejected</span>'})[s];
+function projCard(p){return `<div class="card"><div>${art({n:p.n,img:p.st==='verified'?p.img:null})}<b>${p.n}</b></div><p class="mu" style="margin:8px 0">${p.d}</p><div>${stTag(p.st)}</div><p class="mu" style="margin:8px 0 0">Launch ${p.date} · Supply ${p.sup?f(p.sup,0):'TBA'}<br>${lnk(p.web,href(p.web))} · ${lnk(p.x,'https://x.com/'+p.x.slice(1))}</p></div>`}
+function projects(){
+ return `<h1>Upcoming projects</h1><p class="sub">Only projects marked Verified have been checked by our team. Everything else is unconfirmed, so do your own research. DEMO DATA: sample links use reserved example domains and will not open real sites.</p><div class="chips">${[['all','All'],['verified','Verified'],['pending','Under review'],['unverified','Unverified'],['rejected','Rejected']].map(s=>`<button class="${pf===s[0]?'on':''}" onclick="pf='${s[0]}';render()">${s[1]}</button>`).join('')}</div>
+ ${P.filter(p=>pf==='all'||p.st===pf).length?`<div class="grid g3" style="margin-bottom:22px">${P.filter(p=>pf==='all'||p.st===pf).map(projCard).join('')}</div>`:'<div class="card empty" style="margin-bottom:22px">No projects with this status yet.</div>'}
+ <div class="card" style="max-width:560px"><h2>Submit a project</h2><div class="bar" style="flex-direction:column"><input id="pn" placeholder="Project name" aria-label="Project name"><input id="pw" placeholder="Official website (https://…)" aria-label="Website"><input id="px" placeholder="Official X handle (@name)" aria-label="X handle"><input id="pi" placeholder="Artwork URL, https only (optional)" aria-label="Artwork URL"><button class="seg" style="padding:10px;justify-content:center;background:var(--or);color:#090B0F;font-weight:700;border:0;cursor:pointer" onclick="submitP()">Send for review</button><span class="mu" id="pmsg">Submissions start as Unverified and are reviewed before any status change. Artwork is only displayed once a project is verified. Never share seed phrases or keys.</span></div></div>`;
+}
+function submitP(){
+ const n=$('#pn').value.trim(),w=$('#pw').value.trim(),x=$('#px').value.trim(),im=$('#pi').value.trim(),m=$('#pmsg');
+ if(n.length<2||n.length>60){m.textContent='Enter a project name between 2 and 60 characters.';return}
+ if(!/^https:\/\/[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(w)){m.textContent='Enter a website that starts with https://.';return}
+ if(!/^@[A-Za-z0-9_]{1,15}$/.test(x)){m.textContent='Enter an X handle like @name (letters, numbers, underscore).';return}
+ if(im&&!/^https:\/\/[^\s"'<>]+$/i.test(im)){m.textContent='Artwork must be an https link to an image, or leave it empty.';return}
+ P.push({id:'p'+P.length,n:esc(n),img:im||null,d:'Awaiting review.',date:'TBA',sup:0,st:'unverified',web:esc(w),x,hue:30});setTimeout(()=>{const m2=$('#pmsg');if(m2)m2.textContent='Thanks. “'+n+'” was added as Unverified and will be reviewed before any status change.'},0);
+ render();
+}
+function discoveryView(){
+ const d=discovery(),groups=['Unusual trading activity','Rising volume','Large floor-price move','Newly discovered','Declining activity'];
+ return `<h1>Smart Discovery</h1><p class="sub">Rule-based signals with the reason shown on every card. These describe activity, not future returns, and none are investment advice.</p>
+ <div class="chips">${['all',...groups].map(g=>`<button class="${dg===g?'on':''}" onclick="dg='${g}';render()">${g==='all'?'All signals':g}</button>`).join('')}</div>${groups.filter(g=>dg==='all'||dg===g).map(g=>{const items=d.filter(x=>x.k===g);return items.length?`<h2>${g}</h2><div class="grid g3" style="margin-bottom:22px">${items.map(discCard).join('')}</div>`:''}).join('')}${foot}`;
+}
+function watchlist(){
+ const items=[...C,...R].filter(x=>WL.has(x.id));
+ return `<h1>Watchlist</h1><p class="sub">Starred collections and Runes. Saved in this browser until accounts arrive in Stage 5.</p>${WL.size?'<button class="btn" onclick="WL.clear();saveWL();render()">Clear watchlist</button>':''}
+ ${items.length?`<div class="card tablewrap"><table><tbody>${items.map(x=>`<tr><td>${star(x.id)}</td><td>${x.id[0]==='c'?nl(x):x.n}</td><td>${x.fl!==undefined?f(x.fl)+' BTC':x.sym}</td><td>${pct(x.ch)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="card empty">Nothing here yet. Star a collection on the Trending page or a Rune on the Runes page to follow it.</div>`}`;
+}
+/* ---------- Live data plumbing ---------- */
+const LV={status:'idle',err:null,meta:null,at:null,stale:false};
+async function apiGet(path){const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),15000);try{const r=await fetch(SERVER+path,{signal:ctl.signal,headers:{accept:'application/json'}});let j=null;try{j=await r.json()}catch(e){}if(!r.ok){const e=new Error((j&&j.error)||('HTTP '+r.status));e.status=r.status;e.kind=j&&j.kind;throw e}return j}finally{clearTimeout(to)}}
+const safeUrl=u=>(typeof u==='string'&&/^https?:\/\//i.test(u))?u:null;
+function fromServer(x){const g=m=>m?m.v:null,PV={},set=(k,m)=>{if(m)PV[k]={src:m.src,at:m.at}};
+ set('fl',x.floorBtc);set('usd',x.floorUsd);set('ch',x.floorChange24hPct);set('ch7',x.floorChange7dPct);set('vol',x.vol24hBtc);set('sales',x.sales24h);set('sup',x.supply);set('list',x.listed);set('own',x.owners);set('desc',x.description);set('img',x.imageUrl);set('web',x.website);set('x',x.twitter);
+ return {id:x.slug,raw:x.name,n:esc(x.name),desc:x.description?esc(x.description.v):null,img:g(x.imageUrl),imgKind:x.imageKind,fl:g(x.floorBtc),usd:g(x.floorUsd),ch:g(x.floorChange24hPct),ch7:g(x.floorChange7dPct),vol:g(x.vol24hBtc),avg:x.vol7dBtc?x.vol7dBtc.v/7:null,sales:g(x.sales24h),list:g(x.listed),own:g(x.owners),sup:g(x.supply),age:null,web:safeUrl(g(x.website)),x:safeUrl(g(x.twitter)),stale:!!x.stale,prov:PV,srcs:x.sources||[],conflicts:x.conflicts||[],hue:0}}
+function ingest(items){items.forEach(x=>{const c=fromServer(x),i=C.findIndex(y=>y.id===c.id);if(i>=0)C[i]=c;else C.push(c)})}
+function setBanner(cls,html){const b=document.querySelector('.demo');b.className='demo '+cls;b.innerHTML=html}
+function liveBanner(){const m=LV.meta||{},pv=(m.providers||[]).map(p=>esc(p.name)+' '+(p.status==='ok'?'\u2713':p.status==='stale'?'(cached)':p.status==='not_configured'?'(not configured)':'\u2717 '+esc(p.kind||'error'))).join(' \u00b7 ');setBanner(LV.stale?'err':'live','<b>LIVE DATA</b> \u00b7 '+pv+' \u00b7 updated '+new Date(LV.at).toLocaleTimeString()+(LV.stale?' \u00b7 <b>cached copy</b>':''))}
+async function loadLive(){C.length=0;R.length=0;P.length=0;LV.status='loading';setBanner('live','Loading live data\u2026');render();
+ try{const j=await apiGet('/api/ordinals?sort=volume&limit=48');ingest(j.data.items);LV.status='ok';LV.meta=j.meta;LV.at=j.fetchedAt;LV.stale=j.stale;liveBanner()}
+ catch(e){LV.status='error';LV.err=e;setBanner('err','<b>Live data unavailable.</b> '+esc(e.message)+'. Nothing is shown rather than guessing. <button class="btn" onclick="loadLive()">Retry</button>')}
+ render()}
+
+/* ---------- Ordinals explorer: search, sort, filters, pagination (server-driven when live, client-side for demo) ---------- */
+const OX={q:'',sort:'floor',dir:'desc',move:'any',size:'any',limit:24,shown:6,ids:[],total:0,page:0,status:'idle',more:false,err:null,meta:null,excluded:0,seq:0};
+const OSORT={floor:['Floor price','fl'],volume:['Trading volume','vol'],sales:['Sales','sales'],supply:['Supply','sup'],name:['Name','n']};
+function ordFilterDemo(){let r=C.filter(c=>c.n.toLowerCase().includes(OX.q.toLowerCase()));
+ if(OX.move==='up')r=r.filter(c=>c.ch!=null&&c.ch>0);if(OX.move==='down')r=r.filter(c=>c.ch!=null&&c.ch<0);
+ if(OX.size==='small')r=r.filter(c=>c.sup!=null&&c.sup<1000);if(OX.size==='medium')r=r.filter(c=>c.sup!=null&&c.sup>=1000&&c.sup<=10000);if(OX.size==='large')r=r.filter(c=>c.sup!=null&&c.sup>10000);
+ const k=OSORT[OX.sort][1],d=OX.dir==='asc'?1:-1;return r.sort((a,b)=>{const x=a[k],y=b[k];if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return(x>y?1:x<y?-1:0)*d})}
+async function fetchOrd(reset){if(!API_BASE)return;
+ if(reset){OX.page=0;OX.ids=[];OX.total=0;OX.more=false;OX.status='loading'}else{if(OX.status==='loading'||OX.status==='more'||!OX.more)return;OX.status='more'}
+ OX.err=null;const my=++OX.seq;render();
+ try{const p=new URLSearchParams({q:OX.q,sort:OX.sort,dir:OX.dir,move:OX.move,size:OX.size,page:String(OX.page+1),limit:String(OX.limit)});const j=await apiGet('/api/ordinals?'+p);if(my!==OX.seq)return;
+  ingest(j.data.items);OX.ids=OX.ids.concat(j.data.items.map(i=>i.slug));OX.page++;OX.total=j.data.total;OX.excluded=j.data.excludedForMissingData||0;OX.meta=j.meta;OX.more=OX.ids.length<OX.total;OX.status='ok'}
+ catch(e){if(my!==OX.seq)return;OX.err=e;OX.status=OX.ids.length?'ok':'error'}
+ render()}
+let oqT;function onOq(v){OX.q=v;if(API_BASE){clearTimeout(oqT);oqT=setTimeout(()=>fetchOrd(true),300)}else{OX.shown=6;render()}}
+function setO(k,v){OX[k]=v;if(API_BASE)fetchOrd(true);else{OX.shown=6;render()}}
+function moreO(){if(API_BASE)fetchOrd(false);else{OX.shown+=6;render()}}
+let IO=null;function watchMore(){if(IO){IO.disconnect();IO=null}const e=$('#sent');if(e&&API_BASE&&'IntersectionObserver' in window){IO=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting))fetchOrd(false)},{rootMargin:'300px'});IO.observe(e)}}
+const xl=(t,u)=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${t}</a>`;
+const srcTip=(c,k)=>{const q=c.prov&&c.prov[k];return q?` title="Source: ${esc(q.src)} \u00b7 updated ${new Date(q.at).toLocaleString()}"`:''};
+const cv=(c,k,t)=>`<span${srcTip(c,k)}>${t}</span>`;
+function usdOf(c){if(c.usd!=null)return{t:'$'+f(c.usd,0),k:'provider'};if(API_BASE&&c.fl!=null&&BTC.data&&!btcStale())return{t:'\u2248 $'+f(c.fl*BTC.data.usd,0),k:'derived'};return null}
+function ordCard(c){const u=usdOf(c),badge=!API_BASE?'<span class="badge demo">DEMO DATA</span>':c.stale?'<span class="badge cached">CACHED</span>':'<span class="badge live">LIVE</span>';
+ const fs=c.prov&&c.prov.fl?'Floor: '+esc(c.prov.fl.src)+' \u00b7 '+new Date(c.prov.fl.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):(API_BASE?'Floor: unavailable from connected providers':'');
+ return `<div class="card click oc" onclick="go('collection-${c.id}')"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="display:flex;align-items:center;min-width:0">${art({n:c.n,raw:c.raw,img:c.img,big:true})}<b style="overflow-wrap:anywhere"><a class="nl" href="#collection-${c.id}">${c.n}</a></b></div>${star(c.id)}</div>
+ <div>${badge}</div><p class="desc">${c.desc||(API_BASE?'No description from the data source.':'Fictional sample collection (DEMO DATA).')}</p>
+ <div class="ost"><div><span class="k">Floor</span>${cv(c,'fl',c.fl==null?'<span class="na">n/a</span>':f(c.fl)+' BTC')}${u?`<br><span class="mu" title="${u.k==='provider'?'USD supplied by the provider':'Derived: floor BTC \u00d7 current BTC/USD from CoinGecko'}">${u.t}${u.k==='derived'?'*':''}</span>`:''}</div>
+ <div><span class="k">24h \u00b7 7d floor</span>${cv(c,'ch',pct(c.ch))} \u00b7 ${cv(c,'ch7',pct(c.ch7))}</div>
+ <div><span class="k">Volume 24h</span>${cv(c,'vol',c.vol==null?'<span class="na">n/a</span>':f(c.vol,2)+' BTC')}</div><div><span class="k">Sales 24h</span>${cv(c,'sales',f(c.sales,0))}</div>
+ <div><span class="k">Supply</span>${cv(c,'sup',f(c.sup,0))}</div><div><span class="k">Listed</span>${cv(c,'list',f(c.list,0))}</div><div><span class="k">Owners</span>${cv(c,'own',f(c.own,0))}</div></div>
+ <div class="ln">${c.web?xl('Website \u2197',href(c.web)):''}${c.x?xl('X \u2197',c.x):''}</div><div class="src">${fs}</div></div>`}
+const skelCards=n=>Array.from({length:n},()=>'<div class="card oc"><div class="skel" style="height:56px;width:70%"></div><div class="skel"></div><div class="skel" style="width:60%"></div><div class="skel" style="height:60px"></div></div>').join('');
+function insCard(n){return '<div class="card empty">Inscription lookup uses the server route <code>/api/inscriptions/'+esc(n)+'</code> (Ordiscan). It is not wired into this page yet.</div>'}
+function ordinals(){
+ if(API_BASE&&OX.status==='idle')setTimeout(()=>fetchOrd(true),0);
+ const ins=iq.trim();let il='';
+ if(ins){if(!/^\d{1,9}$/.test(ins))il='<div class="card empty">Enter an inscription number using digits only, for example 1042.</div>';else if(API_BASE)il=insCard(ins);else{const n=+ins,c=C[n%C.length];il=`<div class="card"><b>Inscription #${f(n,0)}</b> <span class="badge demo">DEMO DATA</span><p class="mu" style="margin:6px 0 0">Placeholder only. Collection: ${nl(c)}. Real lookups need the server and an Ordiscan key.</p></div>`}}
+ const all=API_BASE?OX.ids.map(id=>C.find(c=>c.id===id)).filter(Boolean):ordFilterDemo(),shown=API_BASE?all:all.slice(0,OX.shown),total=API_BASE?OX.total:all.length,more=API_BASE?OX.more:shown.length<all.length;
+ const so=(k,arr)=>arr.map(([v,l])=>`<option value="${v}" ${OX[k]===v?'selected':''}>${l}</option>`).join('');
+ const loading=API_BASE&&OX.status==='loading';
+ let body;
+ if(loading)body=`<div class="grid g3">${skelCards(6)}</div>`;
+ else if(API_BASE&&OX.status==='error')body=`<div class="card empty">Could not load collections: ${esc((OX.err&&OX.err.message)||'unknown error')}.<br><button class="btn" onclick="fetchOrd(true)">Retry</button></div>`;
+ else if(!shown.length)body=`<div class="card empty">No collections match these filters.${OX.excluded?` ${OX.excluded} collections were excluded because the connected providers do not supply the data this filter needs.`:''} Try clearing the search or filters.</div>`;
+ else body=`<div class="grid g3">${shown.map(ordCard).join('')}${API_BASE&&OX.status==='more'?skelCards(3):''}</div>`;
+ const pv=API_BASE&&OX.meta?`<p class="mu">Providers: ${(OX.meta.providers||[]).map(p=>esc(p.name)+' '+(p.status==='ok'?'ok':p.status==='not_configured'?'not configured':esc(p.kind||p.status))).join(' \u00b7 ')}${(OX.meta.warnings||[]).length?'<br>'+OX.meta.warnings.map(esc).join('<br>'):''}</p>`:'';
+ return `<h1>Ordinals explorer</h1><p class="sub">${API_BASE?'Collections discovered from the connected providers. Hover a value to see its source and update time.':'DEMO DATA: these are fictional sample collections. Connect providers to browse real Ordinals collections.'}</p>
+ <div class="ctl"><input id="oq" type="search" value="${esc(OX.q)}" placeholder="Search collections by name" oninput="onOq(this.value)" aria-label="Search collections"><select onchange="setO('sort',this.value)" aria-label="Sort by">${so('sort',Object.entries(OSORT).map(([k,v])=>[k,'Sort: '+v[0]]))}</select><select onchange="setO('dir',this.value)" aria-label="Sort direction">${so('dir',[['desc','High to low'],['asc','Low to high']])}</select><select onchange="setO('move',this.value)" aria-label="Price movement">${so('move',[['any','Any movement'],['up','Floor rising'],['down','Floor falling']])}</select><select onchange="setO('size',this.value)" aria-label="Collection size">${so('size',[['any','Any size'],['small','Small (under 1k)'],['medium','Medium (1k\u201310k)'],['large','Large (over 10k)']])}</select></div>
+ <div class="ctl"><input id="iq" value="${esc(iq)}" placeholder="Look up an inscription number" inputmode="numeric" oninput="iq=this.value;render()" aria-label="Inscription number"></div>${il?`<div style="margin-bottom:14px">${il}</div>`:''}
+ <p class="mu" style="margin:0 0 10px">${loading?'Loading\u2026':`Showing ${shown.length} of ${f(total,0)} collections`}</p>${body}
+ ${more&&!loading?`<div class="more"><button class="btn" onclick="moreO()">${OX.status==='more'?'Loading\u2026':'Load more'}</button></div>${API_BASE?'<div id="sent"></div>':''}`:''}${pv}
+ <p class="mu">* USD marked with an asterisk is derived from the floor in BTC and the current BTC/USD quote; other USD values come from the provider.</p>${foot}`}
+
+/* detail: live collections not yet loaded are fetched by slug */
+const DETAILERR={},FETCHING=new Set();
+function provCard(c){if(!API_BASE)return '';const rows=[['Floor (BTC)','fl'],['Floor (USD)','usd'],['24h floor change','ch'],['7d floor change','ch7'],['Volume 24h','vol'],['Sales 24h','sales'],['Supply','sup'],['Listed','list'],['Owners','own'],['Description','desc'],['Artwork','img'],['Website','web'],['X account','x']];
+ return `<div class="card prov tablewrap" style="margin-bottom:14px"><h2>Data sources</h2><table><thead><tr><th>Metric</th><th>Source</th><th>Updated</th></tr></thead><tbody>${rows.map(([l,k])=>{const q=c.prov&&c.prov[k];return `<tr><td>${l}</td><td>${q?esc(q.src):'<span class="na">Unavailable from connected providers</span>'}</td><td>${q?new Date(q.at).toLocaleString():'n/a'}</td></tr>`}).join('')}</tbody></table>${(c.conflicts||[]).length?`<p class="mu">Providers disagree on floor price: ${c.conflicts.map(x=>esc(x.alt.src)+' reports '+f(x.alt.v)+' BTC').join('; ')}. The value shown comes from ${esc((c.prov.fl||{}).src||'n/a')}.</p>`:''}${c.imgKind==='representative-item'?'<p class="mu">Artwork is an actual item from this collection, not an official collection logo.</p>':''}</div>`}
+function detail(id){const c=C.find(x=>x.id===id);
+ if(c)return detailInner(id);
+ if(!API_BASE)return '<div class="card empty">Collection not found.</div>';
+ if(DETAILERR[id])return `<div class="card empty">Could not load this collection: ${esc(DETAILERR[id])}</div>`;
+ if(!FETCHING.has(id)){FETCHING.add(id);apiGet('/api/ordinals/'+encodeURIComponent(id)).then(j=>ingest([j.data])).catch(e=>{DETAILERR[id]=e.message}).finally(()=>{FETCHING.delete(id);render()})}
+ return '<div class="skel" style="width:40%"></div><div class="skel"></div><div class="skel" style="width:70%"></div>'}
+function detailInner(id){
+ const c=C.find(x=>x.id===id),i=C.indexOf(c),n=30;
+ const fs=series(n,i+2).map((v,_,a)=>v/a[n-1]*c.fl),vs=series(n,i+9).map(v=>v/1000*c.avg);vs[n-1]=c.vol;
+ const sig=discovery().filter(x=>x.c.id===id);
+ const ev=['sold','sold','listed','sold','delisted','sold','listed','sold'];
+ const rows=ev.map((e,k)=>`<tr><td>#${f((i*911+k*137)%c.sup+1,0)}</td><td>${f(c.fl*(1+((k*7)%9-3)/60))} BTC</td><td>${e}</td><td class="mu">${k*7+2}m ago</td></tr>`).join('');
+ const st=[['Floor price',c.fl==null?'n/a':f(c.fl)+' BTC'+(usdOf(c)?' · '+usdOf(c).t+(usdOf(c).k==='derived'?'*':''):'')],['24h change',pct(c.ch)],['Volume 24h',f(c.vol,1)+' BTC'],['Sales 24h',c.sales==null?'n/a':c.sales],['Listed',c.list==null?'n/a':c.list+(c.sup?' ('+(c.list/c.sup*100).toFixed(1)+'%)':'')],['Supply',f(c.sup,0)],['Rank by volume','#'+rk(c)],['Volume vs 7d avg',c.vol==null||!c.avg?'n/a':(c.vol/c.avg).toFixed(1)+'×']];
+ return `<a class="nl back" href="#ordinals">← All collections</a>
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 6px"><div style="display:flex;align-items:center;gap:14px">${art({n:c.n,img:c.img,big:true})}<div><h1 style="margin:0">${c.n}</h1><span class="tag">${API_BASE?'LIVE DATA':'DEMO DATA'}</span></div></div>${star(c.id)}</div>
+ <p class="sub">${API_BASE?esc(c.desc||'No description supplied by the data source.'):c.n+' is a fictional sample collection of '+f(c.sup,0)+' inscriptions. Real descriptions, creators and royalty details will come from a verified provider.'}</p>
+ <div class="grid g4" style="margin-bottom:14px">${st.map(s=>`<div class="card stat"><span>${s[0]}</span><b style="font-size:19px">${s[1]}</b></div>`).join('')}</div>
+ ${provCard(c)}<div class="card" style="margin-bottom:14px"><h2>Why it appears in Smart Discovery</h2>${sig.length?sig.map(x=>`<span class="tag">${x.k}</span><ul class="why">${x.why.map(w=>`<li>${w}</li>`).join('')}</ul>`).join(''):'<span class="mu">No discovery rule is triggered right now.</span>'}</div>
+ <div class="grid g11" style="margin-bottom:14px"><div class="card"><h2>Floor price, 30 days (BTC)</h2>${API_BASE?'<div class="empty">Unavailable: no historical floor series from the connected provider.</div>':lc(fs)}</div><div class="card"><h2>Daily volume, 30 days (BTC)</h2>${API_BASE?'<div class="empty">Unavailable: no historical volume series from the connected provider.</div>':bc(vs)}</div></div>
+ <div class="grid g11" style="margin-bottom:14px"><div class="card tablewrap"><h2>Recent market activity</h2><table><thead><tr><th>Item</th><th>Price</th><th>Event</th><th>When</th></tr></thead><tbody>${API_BASE?'<tr><td colspan="4" class="mu">Unavailable: sales history is not connected yet.</td></tr>':rows}</tbody></table></div><div class="card"><h2>View on other sites</h2><div class="ext">${c.web?xl('Official website ↗',href(c.web)):''}${c.x?xl('X account ↗',c.x):''}<a href="https://unisat.io" target="_blank" rel="noopener noreferrer">UniSat</a><a href="https://ordiscan.com" target="_blank" rel="noopener noreferrer">Ordiscan</a></div><p class="mu">Magic Eden is not listed because it shut down its Bitcoin marketplace in 2026. These open each site's front page. Links to this exact collection arrive once a provider supplies real collection slugs. SatsScout does not buy, sell or list.</p></div></div>${foot}`;
+}
+const VIEWS={overview:['Overview',overview],trending:['Trending',trending],ordinals:['Ordinals',ordinals],runes:['Runes',runes],projects:['Upcoming',projects],discovery:['Smart Discovery',discoveryView],watchlist:['Watchlist',watchlist]};
+function cur(){const h=location.hash.slice(1);if(h.startsWith('collection-')&&(API_BASE||C.find(c=>c.id===h.slice(11))))return h;return VIEWS[h]?h:'overview'}
+function viewHTML(k){
+ if(API_BASE&&LV.status==='loading')return '<div class="skel" style="width:40%"></div><div class="skel"></div><div class="skel" style="width:70%"></div>';
+ if(API_BASE&&LV.status==='error')return '<div class="card empty">Could not load live data, so nothing is shown instead of guessing.<br><button class="btn" onclick="loadLive()">Retry</button></div>';
+ return k.startsWith('collection-')?detail(k.slice(11)):VIEWS[k][1]()}
+function render(){
+ const ae=document.activeElement,aid=(ae&&ae.id&&ae.closest&&ae.closest('#view'))?ae.id:null,sel=aid&&ae.selectionStart!=null?[ae.selectionStart,ae.selectionEnd]:null;
+ const k=cur();
+ $('#nav').innerHTML=Object.entries(VIEWS).map(([id,v])=>`<a href="#${id}" class="${id===(k.startsWith('collection-')?'ordinals':k)?'on':''}">${v[0]}${id==='watchlist'&&WL.size?` (${WL.size})`:''}</a>`).join('');
+ $('#view').innerHTML=viewHTML(k);
+ if(aid){const i=$('#'+aid);if(i){i.focus();if(sel){try{i.setSelectionRange(sel[0],sel[1])}catch(e){}}}}
+ watchMore();
+}
+window.addEventListener('hashchange',()=>{setNav(false);render();window.scrollTo(0,0)});
+const setNav=o=>{$('#side').classList.toggle('open',o);document.body.classList.toggle('navopen',o);$('#menu').setAttribute('aria-expanded',o?'true':'false');$('#menu').setAttribute('aria-label',o?'Close menu':'Open menu');if(o){const a=$('#nav a');if(a)a.focus()}};
+$('#menu').onclick=()=>setNav(!$('#side').classList.contains('open'));
+$('#scrim').onclick=()=>setNav(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#side').classList.contains('open')){setNav(false);$('#menu').focus()}});
+matchMedia('(min-width:901px)').addEventListener('change',e=>{if(e.matches)setNav(false)});
+$('#q').addEventListener('input',e=>{
+ const v=e.target.value.trim().toLowerCase(),r=$('#res');
+ if(!v){r.hidden=true;return}
+ const hits=[...C.map(c=>[c.n,'Collection','collection-'+c.id]),...R.map(c=>[c.n,'Rune','runes']),...P.map(c=>[c.n,'Project','projects'])].filter(h=>h[0].toLowerCase().includes(v));
+ if(/^\d{1,9}$/.test(v))hits.unshift(['Inscription #'+v,'Inscription (demo)','ordinals',`iq='${v}';`]);r.hidden=false;
+ r.innerHTML=hits.length?hits.map(h=>`<div onclick="${h[3]||''}go('${h[2]}');$('#res').hidden=true">${h[0]}<small>${h[1]}</small></div>`).join(''):'<div class="mu">No matches. Try a collection, Rune or project name.</div>';
+});
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){const d=$('#res div[onclick]');if(d)d.click()}if(e.key==='Escape')$('#res').hidden=true});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))$('#res').hidden=true});
+/* ---------- BTC price widget (CoinGecko /simple/price; same-origin server route when available) ---------- */
+const BTC={timer:null,delay:60000,data:null,ok:false,busy:false,err:null,staleAfter:180000};
+const BTC_KEY='ss_btc';
+const BTC_SVG='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#F7931A"/><text x="16" y="22.5" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="Arial,sans-serif">\u20bf</text></svg>';
+function btcLoadCache(){try{const j=JSON.parse(localStorage.getItem(BTC_KEY)||'null');if(j&&typeof j.usd==='number'&&j.ts&&!isNaN(new Date(j.ts)))BTC.data={usd:j.usd,chg:typeof j.chg==='number'?j.chg:null,ts:new Date(j.ts)}}catch(e){}}
+function btcSave(){try{localStorage.setItem(BTC_KEY,JSON.stringify({usd:BTC.data.usd,chg:BTC.data.chg,ts:BTC.data.ts.toISOString()}))}catch(e){}}
+function btcStale(){return !BTC.data||!BTC.ok||Date.now()-BTC.data.ts.getTime()>BTC.staleAfter}
+function btcWhy(e,st,body){const k=body&&body.kind;
+ if(st===429||k==='rate_limit')return{short:'Rate limited',long:'CoinGecko rate limit reached. Retrying automatically with back-off.'};
+ if(k==='config'||st===503)return{short:'Not configured',long:(body&&body.error)||'The price service is not configured.'};
+ if(k==='auth'||st===401||st===403)return{short:'Key rejected',long:'CoinGecko rejected the API key.'};
+ if(st>=500||k==='upstream'||k==='timeout')return{short:'Service error',long:(body&&body.error)||'The price service returned an error (HTTP '+st+').'};
+ if(st>=400)return{short:'Request failed',long:'The price service answered HTTP '+st+'.'};
+ if(e&&e.name==='AbortError')return{short:'Timed out',long:'The price service did not answer within 8 seconds.'};
+ if(e&&e.message==='bad shape')return{short:'Bad response',long:'The price service returned an unexpected response.'};
+ return{short:'Offline or blocked',long:'The browser could not reach the price service. You may be offline, or this page is hosted where outside requests are blocked (a preview sandbox). Deploy it with the server routes to fix this.'}}
+function paintBtc(){const el=$('#btc'),d=BTC.data,stale=!!d&&btcStale();
+ el.classList.toggle('stale',stale);el.classList.toggle('err',!d&&!!BTC.err);
+ if(!d&&!BTC.err){el.innerHTML=BTC_SVG+'<span class="px"><span class="sk"></span><span class="sk" style="width:54px;margin-top:4px"></span></span>';el.title='Loading BTC price';el.setAttribute('aria-label','Loading Bitcoin price');return}
+ if(!d){el.innerHTML=BTC_SVG+'<span class="px"><span class="lbl">BITCOIN</span><span class="pr">Price unavailable</span><span class="meta">'+esc(BTC.err.short)+' \u00b7 tap to retry</span></span>';el.title=BTC.err.long+' Tap to retry.';el.setAttribute('aria-label','Bitcoin price unavailable: '+BTC.err.short+'. Tap to retry.');return}
+ const usd=d.usd.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:d.usd>=1000?0:2}),c=d.chg,tm=d.ts.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}),ts=d.ts.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),sl=stale?'Stale \u00b7 ':'';
+ el.innerHTML=BTC_SVG+`<span class="px"><span class="lbl">BITCOIN</span><span class="pr">${usd}</span><span class="meta"><span class="t-long">${sl}Updated ${tm}${BTC.err?' \u00b7 tap to retry':''}</span><span class="t-short">${stale?'Stale ':''}${ts}</span></span></span>`+(c==null?'':`<span class="chg ${c>=0?'up':'dn'}">${c>=0?'\u25b2 +':'\u25bc \u2212'}${Math.abs(c).toFixed(2)}%<span class="h24"> (24h)</span></span>`);
+ el.title='BTC/USD from CoinGecko \u00b7 24h '+(c==null?'n/a':(c>=0?'+':'\u2212')+Math.abs(c).toFixed(2)+'%')+' \u00b7 quote time '+d.ts.toLocaleString()+(stale?(BTC.err?'. Latest refresh failed ('+BTC.err.short+'); showing the last good quote.':'. This quote is older than expected.'):'');
+ el.setAttribute('aria-label','Bitcoin '+usd+', '+(c==null?'24 hour change unavailable':(c>=0?'up ':'down ')+Math.abs(c).toFixed(2)+' percent in 24 hours')+(stale?', stale quote':''))}
+async function fetchBtc(){if(BTC.busy)return;BTC.busy=true;
+ const viaServer=!!SERVER,url=viaServer?SERVER+'/api/btc-price':'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true';
+ const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),8000);let st=0,body=null;
+ try{const r=await fetch(url,{signal:ctl.signal,headers:{accept:'application/json'}});st=r.status;try{body=await r.json()}catch(e){}
+  if(!r.ok)throw new Error('HTTP '+st);
+  const b=viaServer?(body&&body.data):(body&&body.bitcoin&&{usd:body.bitcoin.usd,change24hPct:body.bitcoin.usd_24h_change,updatedAt:body.bitcoin.last_updated_at?new Date(body.bitcoin.last_updated_at*1000).toISOString():null});
+  if(!b||typeof b.usd!=='number'||!isFinite(b.usd))throw new Error('bad shape');
+  BTC.data={usd:b.usd,chg:typeof b.change24hPct==='number'?b.change24hPct:null,ts:new Date(b.updatedAt||(viaServer&&body.fetchedAt)||Date.now())};
+  BTC.staleAfter=((viaServer&&b.ttlSeconds?b.ttlSeconds:60)+120)*1000;
+  BTC.ok=!(viaServer&&body.stale);BTC.err=BTC.ok?null:{short:'Provider unreachable',long:'The server is serving its last cached quote because CoinGecko could not be reached.'};BTC.delay=60000;btcSave()}
+ catch(e){BTC.ok=false;BTC.err=btcWhy(e,st,body);BTC.delay=Math.min(BTC.delay*2,300000)}
+ finally{clearTimeout(to);BTC.busy=false}
+ paintBtc();clearTimeout(BTC.timer);BTC.timer=setTimeout(()=>{BTC.timer=null;if(!document.hidden)fetchBtc()},BTC.delay)}
+function initBtc(){btcLoadCache();paintBtc();fetchBtc();
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!BTC.timer&&!BTC.busy)fetchBtc()});
+ $('#btc').addEventListener('click',e=>{if(BTC.err&&!BTC.busy){e.preventDefault();BTC.delay=60000;fetchBtc()}})}
+
+/* ---------- Boot: detect the same-origin server, then choose demo or live mode ---------- */
+async function probeServer(){if(!/^https?:$/.test(location.protocol))return null;
+ try{const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),2500);const r=await fetch('/api/health',{signal:ctl.signal,headers:{accept:'application/json'}});clearTimeout(t);if(!r.ok)return null;const j=await r.json();return j&&j.app==='satsscout'?j:null}catch(e){return null}}
+async function boot(){const h=await probeServer();
+ if(h){SERVER=location.origin;if(h.providersConfigured>0)API_BASE=SERVER}
+ initBtc();
+ if(API_BASE)loadLive();
+ else{if(h)setBanner('','<b>DEMO DATA.</b> A server is reachable but no data provider is configured yet, so every collection and number below is fictional sample data.');render()}}
+boot();
+</script>
+</body>
+</html>
